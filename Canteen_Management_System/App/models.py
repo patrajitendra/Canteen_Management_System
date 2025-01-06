@@ -114,7 +114,7 @@ class ItemPrice(models.Model):
 
     def __str__(self):
         return f"{self.item.item_name} - {self.price}"
-
+#student daily transaction
 class Transaction(models.Model):
     PAYMENT_MODE_CHOICES = [
         ('online', 'Online'),
