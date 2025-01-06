@@ -1,0 +1,162 @@
+{% extends 'Student/base.html' %}
+
+{% block title %}Add Meal{% endblock %}
+
+{% block extra_styles %}
+    <head>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card p-4 shadow-sm">
+        <div class="card-header text-center bg-primary text-white">
+            <h3>Add Meal</h3>
+        </div>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label for="student" class="form-label">Student</label>
+                    <select id="student" name="student" class="form-select" required>
+                        <option value="" disabled selected>Select a Student</option>
+                        {% for student in students %}
+                            <option value="{{ student.student_id }}">{{ student.first_name }} {{ student.last_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-md-6">
+                    <label for="category" class="form-label">Category</label>
+                    <select id="category" name="category" class="form-select" required>
+                        <option value="" disabled selected>Select a Category</option>
+                        {% for category in categories %}
+                            <option value="{{ category.category_id }}">{{ category.category_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div id="items-container">
+                <!-- Initial item row -->
+                <div class="mb-3 item-row d-flex align-items-center" id="item-row-1">
+                    <div class="flex-grow-1">
+                        <label for="item-1" class="form-label">Item</label>
+                        <select id="item-1" name="items[]" class="form-select" required>
+                            <option value="" disabled selected>Select an Item</option>
+                        </select>
+                    </div>
+                    <div class="flex-grow-1 ms-3">
+                        <label for="quantity-1" class="form-label">Quantity</label>
+                        <input id="quantity-1" name="quantities[]" type="number" class="form-control" min="1" value="1" required>
+                    </div>
+                    <button type="button" class="btn btn-outline-danger ms-3 remove-item">Remove</button>
+                </div>
+            </div>
+            
+            <button type="button" id="add-item" class="btn btn-secondary mt-3">Add Item</button>
+            
+
+            <div class="mb-3">
+                <label for="payment_status" class="form-label">Payment Status</label>
+                <select id="payment_status" name="payment_status" class="form-select" required>
+                    <option value="enabled" selected>Enabled</option>
+                    <option value="disabled">Disabled</option>
+                </select>
+            </div>
+
+            <div class="mb-3 d-none" id="conditional-payment-mode">
+                <label for="conditional_payment_mode" class="form-label">Conditional Payment Mode</label>
+                <select id="conditional_payment_mode" name="conditional_payment_mode" class="form-select">
+                    <option value="online">Online</option>
+                    <option value="offline">Offline</option>
+                </select>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+    let itemCount = 1;
+
+    // Populate item dropdowns based on category
+    function populateItemsDropdown(categoryId, dropdown) {
+        if (categoryId) {
+            $.ajax({
+                url: '{% url "get_items" %}',
+                method: 'GET',
+                data: { category_id: categoryId },
+                success: function (data) {
+                    const items = data.items || [];
+                    dropdown.empty().append('<option value="" disabled selected>Select an Item</option>');
+                    items.forEach(function (item) {
+                        dropdown.append(`<option value="${item.item_id}">${item.item_name}</option>`);
+                    });
+                },
+                error: function () {
+                    alert('Error fetching items. Please try again.');
+                }
+            });
+        } else {
+            dropdown.empty().append('<option value="" disabled selected>Select an Item</option>');
+        }
+    }
+
+    // Handle category change to populate items
+    $('#category').change(function () {
+        const categoryId = $(this).val();
+        const firstDropdown = $('#item-1');
+        populateItemsDropdown(categoryId, firstDropdown);
+    });
+
+    // Add a new item row
+    $('#add-item').click(function () {
+        itemCount++;
+        const newItemRow = `
+            <div class="mb-3 item-row d-flex align-items-center" id="item-row-${itemCount}">
+                <div class="flex-grow-1">
+                    <label for="item-${itemCount}" class="form-label">Item</label>
+                    <select id="item-${itemCount}" name="items[]" class="form-select" required>
+                        <option value="" disabled selected>Select an Item</option>
+                    </select>
+                </div>
+                <div class="flex-grow-1 ms-3">
+                    <label for="quantity-${itemCount}" class="form-label">Quantity</label>
+                    <input id="quantity-${itemCount}" name="quantities[]" type="number" class="form-control" min="1" value="1" required>
+                </div>
+                <button type="button" class="btn btn-outline-danger ms-3 remove-item">Remove</button>
+            </div>`;
+        $('#items-container').append(newItemRow);
+
+        // Populate items for the new dropdown
+        const categoryId = $('#category').val();
+        const newDropdown = $(`#item-${itemCount}`);
+        populateItemsDropdown(categoryId, newDropdown);
+    });
+
+    // Remove item row
+    $(document).on('click', '.remove-item', function () {
+        $(this).closest('.item-row').remove();
+    });
+
+    $('#payment_status').change(function () {
+        if ($(this).val() === 'enabled') {
+            $('#conditional-payment-mode').removeClass('d-none');
+        } else {
+            $('#conditional-payment-mode').addClass('d-none');
+            $('#conditional_payment_mode').val('');
+        }
+    });
+
+});
+
+    </script>
+
+{% endblock %}

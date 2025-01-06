@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Canteen Management System{% endblock %}</title>
+    <style>
+        /* Base Styling */
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            background-color: #f4f7fc;
+            /* background-image: url("{% static 'images/canteen-management-system-project.jpg' %}"); */
+
+        }
+
+        header {
+            background-color: #5c6bc0;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        nav {
+            background-color: #3f4c93;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1rem;
+            text-transform: uppercase;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #ffcc80;
+        }
+
+        main {
+            flex: 1;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+
+        footer {
+            background-color: #5c6bc0;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+
+        footer a {
+            color: #ffcc80;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            nav {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            nav a {
+                margin: 10px 0;
+            }
+
+            footer p {
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Button Styling for Navigation Links */
+        .nav-btn {
+            padding: 10px 20px;
+            background-color: #ffcc80;
+            color: #3f4c93;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        .nav-btn:hover {
+            background-color: #f57c00;
+            color: white;
+        }
+    </style>
+    {% block extra_styles %}{% endblock %}
+</head>
+<body>
+    <header>
+        <h1>Canteen Management System</h1>
+    </header>
+
+    <nav>
+        <a href="/" class="nav-btn">Home</a>
+        <a href="/register/" class="nav-btn">Register</a>
+        <a href="/category/create/" class="nav-btn">Category</a>
+        <a href="/display_menu/" class="nav-btn">Menu</a>
+        <a href="/create/" class="nav-btn">Add Menu</a>
+        <a href="/add_meal/" class="nav-btn">Add Meal</a>
+        <a href="/contact/" class="nav-btn">Contact</a>
+        <a href="/login/" class="nav-btn">Login</a>
+    </nav>
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Canteen Management System. All rights reserved.</p>
+        <p>
+            <a href="/privacy/">Privacy Policy</a> |
+            <a href="/terms/">Terms of Service</a> |
+            <a href="/contact/">Contact Us</a>
+        </p>
+    </footer>
+
+    {% block extra_footer %}{% endblock %}
+</body>
+</html>
